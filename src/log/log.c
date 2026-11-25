@@ -23,7 +23,9 @@ void log_file_write(const char* msg) {
                 len = strlen(msg);
             }
 
-            if (R_SUCCEEDED(fsFileWrite(&g_log_file, g_file_off, msg, len, 0))) {
+            // Flushed per line, so another process reading the log (e.g. an overlay showing it live) sees each
+            // line as it's written instead of when the file is next flushed or closed.
+            if (R_SUCCEEDED(fsFileWrite(&g_log_file, g_file_off, msg, len, FsWriteOption_Flush))) {
                 g_file_off += len;
             }
         }
